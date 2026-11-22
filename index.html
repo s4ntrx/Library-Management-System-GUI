@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Library Desk</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="i-search" viewBox="0 0 20 20"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M13 13l4.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 20 20"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  </svg>
+
+  <header class="masthead">
+    <div>
+      <h1>Library Desk</h1>
+      <p id="stats" class="stats" aria-live="polite"></p>
+    </div>
+    <nav aria-label="Sections">
+      <a href="#catalogue">Catalogue</a>
+      <a href="#members">Members</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="catalogue" aria-labelledby="catalogue-heading">
+      <h2 id="catalogue-heading" class="sr-only">Catalogue</h2>
+      <div class="toolbar">
+        <label class="search">
+          <span class="sr-only">Search by title, author or ISBN</span>
+          <svg width="18" height="18" aria-hidden="true"><use href="#i-search"/></svg>
+          <input id="search" type="search" placeholder="Title, author or ISBN" autocomplete="off">
+        </label>
+        <fieldset class="segmented">
+          <legend class="sr-only">Show</legend>
+          <label><input type="radio" name="filter" value="all" checked><span>All</span></label>
+          <label><input type="radio" name="filter" value="available"><span>Available</span></label>
+          <label><input type="radio" name="filter" value="borrowed"><span>On loan</span></label>
+          <label><input type="radio" name="filter" value="overdue"><span>Overdue</span></label>
+        </fieldset>
+        <button id="add-book" class="btn primary" type="button">
+          <svg width="16" height="16" aria-hidden="true"><use href="#i-plus"/></svg>Add book
+        </button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <caption class="sr-only">Books in the library</caption>
+          <thead><tr><th scope="col">No.</th><th scope="col">Book</th><th scope="col" class="isbn">ISBN</th><th scope="col">Status</th><th scope="col">Due</th><th scope="col"><span class="sr-only">Action</span></th></tr></thead>
+          <tbody id="book-rows"></tbody>
+        </table>
+      </div>
+      <div id="catalogue-note" class="note" hidden></div>
+    </section>
+
+    <section id="members" aria-labelledby="members-heading" hidden>
+      <h2 id="members-heading" class="sr-only">Members</h2>
+      <div class="toolbar">
+        <p class="grow">People who can borrow books.</p>
+        <button id="add-member" class="btn primary" type="button">
+          <svg width="16" height="16" aria-hidden="true"><use href="#i-plus"/></svg>Add member
+        </button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <caption class="sr-only">Registered members</caption>
+          <thead><tr><th scope="col">No.</th><th scope="col">Name</th><th scope="col">Email</th><th scope="col">Books out</th></tr></thead>
+          <tbody id="member-rows"></tbody>
+        </table>
+      </div>
+      <div id="members-note" class="note" hidden></div>
+    </section>
+  </main>
+
+  <dialog id="book-dialog" aria-labelledby="book-heading">
+    <form id="book-form">
+      <h2 id="book-heading">Add a book</h2>
+      <label>Title<input name="title" required maxlength="200" autocomplete="off"></label>
+      <label>Author<input name="author" required maxlength="120" autocomplete="off"></label>
+      <label>ISBN <span class="hint">optional</span><input name="isbn" maxlength="32" autocomplete="off"></label>
+      <p class="form-error" role="alert"></p>
+      <div class="actions"><button type="button" class="btn" data-close>Cancel</button><button type="submit" class="btn primary">Save book</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="member-dialog" aria-labelledby="member-heading">
+    <form id="member-form">
+      <h2 id="member-heading">Add a member</h2>
+      <label>Full name<input name="name" required maxlength="100" autocomplete="off"></label>
+      <label>Email<input name="email" type="email" required maxlength="120" autocomplete="off"></label>
+      <p class="form-error" role="alert"></p>
+      <div class="actions"><button type="button" class="btn" data-close>Cancel</button><button type="submit" class="btn primary">Save member</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="borrow-dialog" aria-labelledby="borrow-title">
+    <form id="borrow-form">
+      <h2 id="borrow-title">Lend book</h2>
+      <label>Member<select id="borrow-member" name="memberId" required></select></label>
+      <p id="borrow-none" class="hint" hidden>No members yet. Add a member first, then lend the book.</p>
+      <p class="form-error" role="alert"></p>
+      <div class="actions"><button type="button" class="btn" data-close>Cancel</button><button id="borrow-submit" type="submit" class="btn primary">Lend for 14 days</button></div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
